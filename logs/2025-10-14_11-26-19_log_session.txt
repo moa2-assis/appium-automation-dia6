@@ -1,0 +1,41 @@
+2025-10-14 11:26:19 - automation_tests - INFO - === Pytest session STARTED ===
+2025-10-14 11:26:19 - automation_tests - INFO - === START test: tests/test_day6.py::test_appium_automacao_pass ===
+2025-10-14 11:26:32 - automation_tests - INFO - [DRIVER] session started: 6718e1c1-7e4c-4e1d-b7e6-67a83f2aabc9
+2025-10-14 11:26:34 - automation_tests - INFO - Clicking element with locator: new UiSelector().text("Show Popup")
+2025-10-14 11:26:36 - automation_tests - INFO - Element clicked successfully.
+2025-10-14 11:26:37 - automation_tests - INFO - Clicking element with locator: new UiSelector().text("Cancel")
+2025-10-14 11:26:39 - automation_tests - INFO - Element clicked successfully.
+2025-10-14 11:26:40 - automation_tests - INFO - Clicking element with locator: new UiSelector().text("Show Popup")
+2025-10-14 11:26:40 - automation_tests - INFO - Element clicked successfully.
+2025-10-14 11:26:41 - automation_tests - INFO - Clicking element with locator: new UiSelector().text("Accept")
+2025-10-14 11:26:42 - automation_tests - INFO - Element clicked successfully.
+2025-10-14 11:26:43 - automation_tests - INFO - Clicking element with locator: new UiSelector().text("Notification")
+2025-10-14 11:26:45 - automation_tests - INFO - Element clicked successfully.
+2025-10-14 11:26:46 - automation_tests - INFO - Clicking element with locator: new UiSelector().resourceId("com.android.permissioncontroller:id/permission_allow_button")
+2025-10-14 11:26:46 - automation_tests - INFO - Element clicked successfully.
+2025-10-14 11:26:46 - automation_tests - INFO - Clicking element with locator: new UiSelector().text("Notification")
+2025-10-14 11:26:47 - automation_tests - INFO - Element clicked successfully.
+2025-10-14 11:26:48 - automation_tests - INFO - === END test: tests/test_day6.py::test_appium_automacao_pass | outcome=passed | duration=15.50s ===
+2025-10-14 11:26:49 - automation_tests - INFO - [DRIVER] quitting session
+2025-10-14 11:26:51 - automation_tests - INFO - === START test: tests/test_day6.py::test_appium_automacao_fail ===
+2025-10-14 11:27:05 - automation_tests - INFO - [DRIVER] session started: fa377c86-f207-4a6a-9fb8-294a1bf52023
+2025-10-14 11:27:07 - automation_tests - INFO - Clicking element with locator: new UiSelector().text("Show Popup")
+2025-10-14 11:27:09 - automation_tests - INFO - Element clicked successfully.
+2025-10-14 11:27:10 - automation_tests - INFO - Clicking element with locator: new UiSelector().text("Cancel")
+2025-10-14 11:27:11 - automation_tests - INFO - Element clicked successfully.
+2025-10-14 11:27:12 - automation_tests - INFO - Clicking element with locator: new UiSelector().text("Show Popup")
+2025-10-14 11:27:14 - automation_tests - INFO - Element clicked successfully.
+2025-10-14 11:27:15 - automation_tests - INFO - Clicking element with locator: new UiSelector().text("Accept")
+2025-10-14 11:27:16 - automation_tests - INFO - Element clicked successfully.
+2025-10-14 11:27:17 - automation_tests - INFO - Clicking element with locator: new UiSelector().text("Notification")
+2025-10-14 11:27:19 - automation_tests - INFO - Element clicked successfully.
+2025-10-14 11:27:20 - automation_tests - INFO - Clicking element with locator: new UiSelector().resourceId("com.android.permissioncontroller:id/permission_allow_button")
+2025-10-14 11:27:20 - automation_tests - INFO - Element clicked successfully.
+2025-10-14 11:27:20 - automation_tests - INFO - Clicking element with locator: new UiSelector().text("Notification")
+2025-10-14 11:27:21 - automation_tests - INFO - Element clicked successfully.
+2025-10-14 11:27:23 - automation_tests - INFO - [ARTIFACT] screenshot saved -> screenshots/2025-10-14_11-27-22_screenshot_test_appium_automacao_fail.png (test=tests/test_day6.py::test_appium_automacao_fail)
+2025-10-14 11:27:23 - automation_tests - INFO - === END test: tests/test_day6.py::test_appium_automacao_fail | outcome=failed | duration=16.78s ===
+2025-10-14 11:27:24 - automation_tests - INFO - [DRIVER] quitting session
+2025-10-14 11:27:26 - automation_tests - INFO - === Pytest session FINISHED (exitstatus=1) ===
+2025-10-14 11:27:26 - automation_tests - INFO - Dashboard: reports/dashboard.html
+2025-10-14 11:27:26 - automation_tests - INFO - Session log: logs/2025-10-14_11-26-19_log_session.txt
