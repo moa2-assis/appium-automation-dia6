@@ -1,12 +1,5 @@
-from tests_API import first_api_test
-import requests
 import pytest
 import csv
-
-api_utils = first_api_test
-
-base_json_url = "https://jsonplaceholder.typicode.com/"
-base_httpbin_url = "https://httpbin.org/"
 
 # Query Params
 # 1. Fetch all comments for post ID 2 and verify that all returned comments belong to that post.
