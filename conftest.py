@@ -11,6 +11,9 @@ from appium.options.common.base import AppiumOptions
 from utils import reporting as R
 from utils.logger import setup_logger
 
+import csv
+import requests
+
 # ==========================================================
 # CONFIGURAÇÃO RÁPIDA
 # ==========================================================
@@ -198,3 +201,18 @@ def driver(request):
         if LOG:
             LOG.info("[DRIVER] quitting session")
         _driver.quit()
+
+@pytest.fixture(scope="session")
+def base_json_url():
+    """Returns the base URL for the JSONPlaceholder API."""
+    return "https://jsonplaceholder.typicode.com"
+
+@pytest.fixture(scope="session")
+def base_httpbin_url():
+    """Returns the base URL for the httpbin API."""
+    return "https://httpbin.org"
+
+@pytest.fixture(scope="function")
+def api_client():
+    """Returns an API client (requests module)."""
+    return requests
