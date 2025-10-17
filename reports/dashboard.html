@@ -5,7 +5,7 @@
 <title>Test Dashboard</title>
 <style>
 body { background:#121212; color:#E0E0E0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin:16px; }
-.wrap { max-width:none; margin:0; }  /* ocupar toda a largura da janela */
+.wrap { max-width:none; margin:0; }
 h1 { margin:0 0 8px; color:#FAFAFA; }
 .meta { color:#9AA0A6; margin-bottom:12px; }
 .card { background:#1E1E1E; border:1px solid #2A2A2A; border-radius:12px; padding:16px; box-shadow: 0 8px 24px rgba(0,0,0,0.35); }
@@ -19,9 +19,8 @@ h1 { margin:0 0 8px; color:#FAFAFA; }
 button { background:#2C2C2C; color:#E0E0E0; border:1px solid #3A3A3A; padding:8px 12px; border-radius:10px; cursor:pointer; transition:all .2s ease; }
 button:hover { transform:translateY(-1px); background:#353535; }
 button.active { border-color:#64B5F6; box-shadow:0 0 0 3px rgba(100,181,246,.15); }
-
 .table-wrap { border-radius:12px; border:1px solid #2A2A2A; }
-table { width:100%; border-collapse:collapse; }  /* agora ocupa toda a largura */
+table { width:100%; border-collapse:collapse; }
 th, td { border-bottom:1px solid #2A2A2A; padding:10px 12px; vertical-align: top; }
 th { background:#1A1A1A; text-align:left; position:sticky; top:0; z-index:1; }
 tbody tr { transition: background .2s ease; }
@@ -30,10 +29,7 @@ tr.pass { background:#142016; }
 tr.fail { background:#2A1414; }
 tr.skip { background:#1A2125; }
 .center { text-align:center; }
-
-/* evitar scroll horizontal */
 td, th { white-space: normal; word-break: break-word; overflow-wrap: anywhere; }
-
 pre { margin:0; white-space:pre-wrap; word-wrap:break-word; overflow-wrap:anywhere; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "JetBrains Mono", monospace; font-size: 12px; line-height: 1.4; color:#E6E6E6; }
 a { color:#80CBC4; }
 .progress { display:flex; height:10px; border-radius:999px; overflow:hidden; border:1px solid #2A2A2A; background:#1A1A1A; }
@@ -46,7 +42,8 @@ function filterRows(mode) {
   const rows = document.querySelectorAll('tbody tr');
   const btns = document.querySelectorAll('.controls button');
   btns.forEach(b => b.classList.remove('active'));
-  document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+  const btn = document.querySelector(`[data-mode="${mode}"]`);
+  if (btn) btn.classList.add('active');
   rows.forEach(r => {
     const isFail = r.classList.contains('fail');
     const isPass = r.classList.contains('pass');
@@ -63,16 +60,14 @@ function filterRows(mode) {
 <body>
   <div class="wrap">
     <h1>Test Dashboard</h1>
-    <div class="meta">Started: 2025-10-14 11:31:23 &nbsp;|&nbsp; Finished: 2025-10-14 11:32:24</div>
+    <div class="meta">Started: 2025-10-15 07:47:46 &nbsp;|&nbsp; Finished: 2025-10-15 07:48:50</div>
 
     <div class="card" style="margin-bottom:16px">
-      <div class="row" style="align-items:center; justify-content:space-between;">
-        <div class="row">
-          <span class="badge pass">✔ Passed: 1</span>
-          <span class="badge fail">✖ Failed: 1</span>
-          <span class="badge skip">⏭ Skipped: 0</span>
-          <span class="badge tot">Σ Total: 2</span>
-        </div>
+      <div class="row">
+        <span class="badge pass">✔ Passed: 1</span>
+        <span class="badge fail">✖ Failed: 1</span>
+        <span class="badge skip">⏭ Skipped: 0</span>
+        <span class="badge tot">Σ Total: 2</span>
       </div>
       <div class="progress" style="margin-top:12px;">
         <div class="bar pass" style="width:50.0%"></div>
@@ -101,26 +96,9 @@ function filterRows(mode) {
           </tr>
         </thead>
         <tbody>
-          <tr class='pass'><td>test_appium_automacao_pass</td><td>tests/test_day6.py::test_appium_automacao_pass</td><td class='center'>passed</td><td class='center'>15.68s</td><td></td><td><pre></pre></td></tr><tr class='fail'><td>test_appium_automacao_fail</td><td>tests/test_day6.py::test_appium_automacao_fail</td><td class='center'>failed</td><td class='center'>16.37s</td><td>📸 <a href="screenshots/2025-10-14_11-32-21_screenshot_test_appium_automacao_fail.png">screenshot</a></td><td><pre>driver = &lt;appium.webdriver.webdriver.WebDriver (session="366e1f8a-c741-411b-a17b-43a4a3ba3735")&gt;
-
-    @pytest.mark.regression
-    @pytest.mark.android
-    def test_appium_automacao_fail(driver):
-        home_page = HomePage(driver)
-        # 1 - Start the application and ensure that the home screen has loaded.
-        time.sleep(2)
-        home_page.click_popup_button()
-        home_page.dismiss_popup()
-        home_page.click_popup_button()
-        home_page.accept_popup()
-        home_page.click_notification_button()
-        home_page.allow_notifications()
-        home_page.click_notification_button()
-    
-&gt;       assert 1 == 2
-E       assert 1 == 2
-
-tests/test_day6.py:36: AssertionError</pre></td></tr>
+          <tr class='pass'><td>test_appium_automacao_pass</td><td>tests/test_day6.py::test_appium_automacao_pass</td><td class='center'>passed</td><td class='center'>15.92s</td><td></td><td><pre></pre></td></tr><tr class='fail'><td>test_appium_automacao_fail</td><td>tests/test_day6.py::test_appium_automacao_fail</td><td class='center'>failed</td><td class='center'>15.24s</td><td>📸 <a href="screenshots/2025-10-15_07-48-46_screenshot_test_appium_automacao_fail.png">screenshot</a> | 🎥 <a href="videos/2025-10-15_07-48-48_video_test_appium_automacao_fail.mp4">video</a></td><td><pre>tests/test_day6.py:36: in test_appium_automacao_fail
+    assert 1 == 2
+E   assert 1 == 2</pre></td></tr>
         </tbody>
       </table>
     </div>

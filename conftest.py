@@ -1,5 +1,5 @@
-# conftest.py
 import base64
+import json
 from pathlib import Path
 from datetime import datetime
 from typing import Optional
@@ -11,88 +11,133 @@ from appium.options.common.base import AppiumOptions
 from utils import reporting as R
 from utils.logger import setup_logger
 
-# ===== logging de sessão =====
+# ==========================================================
+# CONFIGURAÇÃO RÁPIDA
+# ==========================================================
+# Define se o dashboard HTML será aberto automaticamente ao fim da execução
+OPEN_DASHBOARD = False  # ⬅️ mude para True se quiser abrir automaticamente
+# ==========================================================
+
+# ===== estado da sessão =====
 LOG = None
-SESSION_LOG_PATH = None
+SESSION_DIR: Optional[Path] = None
+TEST_COUNTER = 0
+NODEID_TO_TESTDIR = {}
+
 
 def _timestamp() -> str:
     return datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
-def _ensure_dir(path: str) -> None:
-    Path(path).mkdir(parents=True, exist_ok=True)
 
+def _ensure_dir(path: Path) -> None:
+    path.mkdir(parents=True, exist_ok=True)
+
+
+def _rel_to_session(p: Path) -> str:
+    return str(p.relative_to(SESSION_DIR))
+
+
+def _sanitize(name: str) -> str:
+    bad = '\\/:*?"<>|'
+    for ch in bad:
+        name = name.replace(ch, "_")
+    return name.strip() or "test"
+
+
+def _write_test_log_line(test_dir: Path, msg: str) -> None:
+    (test_dir / "test_log.txt").open("a", encoding="utf-8").write(
+        f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {msg}\n"
+    )
+
+
+# ===== pytest lifecycle =====
 @pytest.hookimpl(tryfirst=True)
 def pytest_sessionstart(session):
-    global LOG, SESSION_LOG_PATH
-    _ensure_dir("logs")
-    SESSION_LOG_PATH = Path("logs") / f"{_timestamp()}_log_session.txt"
-    LOG = setup_logger(SESSION_LOG_PATH)
-    LOG.info("=== Pytest session STARTED ===")
+    """Cria o 'paizinho' da sessão e inicializa o logger de sessão dentro dele."""
+    global LOG, SESSION_DIR
+    SESSION_DIR = Path("tests_compiled_info") / _timestamp()
+    _ensure_dir(SESSION_DIR)
+    LOG = setup_logger(SESSION_DIR / "session_log.txt")
+    LOG.info(f"=== Pytest session STARTED ===")
+    LOG.info(f"Output dir: {SESSION_DIR}")
+
 
 @pytest.hookimpl(trylast=True)
 def pytest_sessionfinish(session, exitstatus):
-    R.write_and_open_dashboard()
+    """Gera dashboard e session_summary.json dentro do paizinho."""
+    R.write_session_summary(SESSION_DIR, exitstatus)
+
+    if OPEN_DASHBOARD:
+        R.write_and_open_dashboard(SESSION_DIR)   # abre
+        if LOG:
+            LOG.info("[DASHBOARD] auto-open enabled → abrindo no navegador...")
+    else:
+        R.write_dashboard(SESSION_DIR)            # não abre
+        if LOG:
+            LOG.info("[DASHBOARD] auto-open desativado → apenas gerado no diretório")
+
     if LOG:
         LOG.info(f"=== Pytest session FINISHED (exitstatus={exitstatus}) ===")
-        LOG.info(f"Dashboard: reports/dashboard.html")
-        LOG.info(f"Session log: {SESSION_LOG_PATH}")
+        LOG.info(f"Dashboard: {SESSION_DIR / 'dashboard.html'}")
+        LOG.info(f"Session log: {SESSION_DIR / 'session_log.txt'}")
 
-# ===== helpers locais (screenshot/vídeo) =====
-def save_screenshot(driver, item) -> str:
-    _ensure_dir("screenshots")
-    name = f"screenshots/{_timestamp()}_screenshot_{item.name}.png"
-    driver.get_screenshot_as_file(name)
-    if LOG:
-        LOG.info(f"[ARTIFACT] screenshot saved -> {name} (test={item.nodeid})")
-    return name
 
-def save_video_from_driver(driver, test_name: str, nodeid: str) -> Optional[str]:
-    data = driver.stop_recording_screen()
-    if not data:
-        return None
-    _ensure_dir("videos")
-    name = f"videos/{_timestamp()}_video_{test_name}.mp4"
-    with open(name, "wb") as f:
-        f.write(base64.b64decode(data))
-    if LOG:
-        LOG.info(f"[ARTIFACT] video saved -> {name} (test={nodeid})")
-    return name
-
-# ===== pytest options/matrix (se usar) =====
-def pytest_addoption(parser):
-    parser.addoption("--browser", action="store", default="chrome",
-                     help="browser to execute tests (chrome or firefox)")
-
-def pytest_generate_tests(metafunc):
-    if "browser" in metafunc.fixturenames:
-        browsers = metafunc.config.getoption("browser").split(",")
-        metafunc.parametrize("browser", browsers)
-
-# ===== hooks de teste =====
 @pytest.hookimpl(tryfirst=True)
 def pytest_runtest_setup(item):
+    """Numera os testes pela ordem REAL de execução."""
+    global TEST_COUNTER
+    TEST_COUNTER += 1
+    item._exec_index = TEST_COUNTER
     if LOG:
-        LOG.info(f"=== START test: {item.nodeid} ===")
+        LOG.info(f"=== START test {item._exec_index:03d}: {item.nodeid} ===")
+
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
+    """Recebe o resultado por fase (setup/call/teardown), cria pasta do teste
+    quando já há outcome final, salva screenshot em falha e alimenta o dashboard."""
     outcome = yield
     rep = outcome.get_result()
 
-    # alimenta o dashboard (fase call)
-    R.upsert_result(item, rep)
+    setattr(item, f"rep_{rep.when}", rep)
 
-    # screenshot apenas em falha
-    if rep.when == "call" and rep.failed and "driver" in item.fixturenames:
-        driver = item.funcargs["driver"]
-        path = save_screenshot(driver, item)
-        R.add_screenshot(item, path)
+    should_create_dir = (
+        (rep.when == "call") or
+        (rep.when == "setup" and rep.failed)
+    )
+    if should_create_dir:
+        outcome_upper = rep.outcome.upper()
+        sanitized = _sanitize(item.name)
+        test_dirname = f"{item._exec_index:03d}_{sanitized}_{outcome_upper}"
+        test_dir = SESSION_DIR / test_dirname
+        NODEID_TO_TESTDIR[item.nodeid] = test_dir
+        _ensure_dir(test_dir)
 
-    # log de fim na fase call (onde temos outcome/duration)
-    if rep.when == "call" and LOG:
+        R.upsert_result(item, rep, order=item._exec_index, test_dirname=test_dirname)
+
         dur = getattr(rep, "duration", None)
         dur_s = f"{dur:.2f}s" if dur is not None else "n/a"
-        LOG.info(f"=== END test: {item.nodeid} | outcome={rep.outcome} | duration={dur_s} ===")
+        if LOG:
+            LOG.info(
+                f"=== END test {item._exec_index:03d}: {item.nodeid} | "
+                f"outcome={rep.outcome} | duration={dur_s} | dir={test_dirname} ==="
+            )
+        _write_test_log_line(test_dir, f"START {item.nodeid}")
+        _write_test_log_line(test_dir, f"END   {item.nodeid} | outcome={rep.outcome} | duration={dur_s}")
+
+    if rep.failed and "driver" in item.fixturenames and rep.when in ("call", "setup"):
+        test_dir = NODEID_TO_TESTDIR.get(item.nodeid)
+        if test_dir:
+            driver = item.funcargs.get("driver")
+            if driver:
+                shot_name = f"screenshot_{_sanitize(item.name)}.png"
+                shot_path = test_dir / shot_name
+                driver.get_screenshot_as_file(str(shot_path))
+                if LOG:
+                    LOG.info(f"[ARTIFACT] screenshot -> {shot_path}")
+                R.add_screenshot(item, _rel_to_session(shot_path))
+                _write_test_log_line(test_dir, f"ARTIFACT screenshot: {shot_name}")
+
 
 @pytest.fixture(scope="function")
 def driver(request):
@@ -106,29 +151,47 @@ def driver(request):
         "appium:nativeWebScreenshot": True,
         "appium:newCommandTimeout": 3600,
         "appium:connectHardwareKeyboard": True,
-        # remova caps redundantes/typos se quiser
     })
     try:
         _driver = webdriver.Remote("http://127.0.0.1:4723", options=options)
-        _driver.start_recording_screen()  # grava sempre; salva arquivo só se falhar
+        _driver.start_recording_screen()
+
+        meta = {
+            "session_id": getattr(_driver, "session_id", ""),
+            "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "capabilities": getattr(_driver, "capabilities", {}) or {},
+        }
+        (SESSION_DIR / "session_meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
+
         if LOG:
             LOG.info(f"[DRIVER] session started: {getattr(_driver, 'session_id', 'n/a')}")
     except Exception as e:
         if LOG:
-            LOG.error(f"[DRIVER] failed to create Appium driver: {e}")
+            LOG.error(f"[DRIVER] failed to create Appium driver: {type(e).__name__}: {e}")
+            LOG.error("Dica: verifique se o Appium Server está on em http://127.0.0.1:4723 e se o emulator-5554 está rodando (adb devices).")
         pytest.skip(f"Failed to create Appium driver: {e}")
 
     yield _driver
 
-    # teardown: vídeo só se falhou
     try:
-        # checa status do teste atual
         rep_call = getattr(request.node, "rep_call", None)
-        failed = bool(rep_call and rep_call.failed)
-        if failed:
-            vid = save_video_from_driver(_driver, request.node.name, request.node.nodeid)
-            if vid:
-                R.add_video(request.node, vid)
+        rep_setup = getattr(request.node, "rep_setup", None)
+        failed = (
+            (rep_call and rep_call.failed) or
+            (rep_setup and rep_setup.failed)
+        )
+        test_dir = NODEID_TO_TESTDIR.get(request.node.nodeid)
+
+        if failed and test_dir:
+            vid_name = f"video_{_sanitize(request.node.name)}.mp4"
+            video_path = test_dir / vid_name
+            data = _driver.stop_recording_screen()
+            if data:
+                video_path.write_bytes(base64.b64decode(data))
+                if LOG:
+                    LOG.info(f"[ARTIFACT] video -> {video_path}")
+                R.add_video(request.node, _rel_to_session(video_path))
+                _write_test_log_line(test_dir, f"ARTIFACT video: {vid_name}")
         else:
             _ = _driver.stop_recording_screen()
     finally:

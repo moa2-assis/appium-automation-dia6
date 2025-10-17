@@ -1,4 +1,3 @@
-# utils/logger.py
 import logging
 import sys
 from pathlib import Path
@@ -10,15 +9,13 @@ _DATEFMT = '%Y-%m-%d %H:%M:%S'
 def setup_logger(log_file: Optional[Union[str, Path]] = None) -> logging.Logger:
     logger = logging.getLogger("automation_tests")
     logger.setLevel(logging.INFO)
+    logger.propagate = False  # evita logs duplicados
 
-    # Evita duplicar handlers se já configurado
     if not logger.handlers:
-        # Console
         ch = logging.StreamHandler(sys.stdout)
         ch.setFormatter(logging.Formatter(_FMT, datefmt=_DATEFMT))
         logger.addHandler(ch)
 
-    # File handler opcional (adiciona se ainda não tiver esse arquivo)
     if log_file:
         log_path = Path(log_file)
         fh_key = f"file::{log_path.resolve()}"
@@ -27,12 +24,10 @@ def setup_logger(log_file: Optional[Union[str, Path]] = None) -> logging.Logger:
             fh = logging.FileHandler(log_path, encoding="utf-8")
             fh.setFormatter(logging.Formatter(_FMT, datefmt=_DATEFMT))
             logger.addHandler(fh)
-            # marca pra evitar duplicata
             if not hasattr(logger, "_handler_keys"):
                 logger._handler_keys = set()
             logger._handler_keys.add(fh_key)
 
     return logger
 
-# Conveniência pra importar direto se quiser
 log = setup_logger()
