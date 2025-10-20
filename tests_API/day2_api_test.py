@@ -2,11 +2,11 @@ import pytest
 import csv
 
 # Query Params
-# 1. Fetch all comments for post ID 2 and verify that all returned comments belong to that post.
+# 41. Fetch all comments for post ID 2 and verify that all returned comments belong to that post.
 @pytest.mark.api_test
 def test_fetch_comments_post_id_two_verify(base_json_url, api_client):
     response = api_client.get(f"{base_json_url}/posts/2/comments")
-    print("Step 1:")
+    print("Step 41:")
     print("Status code: " + str(response.status_code))
     if(response.status_code == 200):
         print("Fetch comment done successfully!")
@@ -24,11 +24,11 @@ def test_fetch_comments_post_id_two_verify(base_json_url, api_client):
     if(all_belong):
           print("All comments belong to post with ID 2")
 
-# 2. List all todos for user ID 5 and verify that the list is not empty.
+# 42. List all todos for user ID 5 and verify that the list is not empty.
 @pytest.mark.api_test
 def test_todos_user_id_five_verify_not_empty(base_json_url, api_client):
     response = api_client.get(f"{base_json_url}/todos?userId=5")
-    print("Step 2:")
+    print("Step 42:")
     if(response.status_code == 200):
         print("Fetch todos done successfully!")
     else:
@@ -40,11 +40,11 @@ def test_todos_user_id_five_verify_not_empty(base_json_url, api_client):
     else:
         print("Todo list for user with ID 5 is empty")
 
-# 3. Fetch all albums for user ID 9 and count how many they have (should be 10).
+# 43. Fetch all albums for user ID 9 and count how many they have (should be 10).
 @pytest.mark.api_test
 def test_all_albums_user_id_nine_how_many(base_json_url, api_client):
     response = api_client.get(f"{base_json_url}//albums?userId=9")
-    print("Step 3:")
+    print("Step 43:")
     if(response.status_code == 200):
         print("Fetch albums done successfully!")
     else:
@@ -54,11 +54,11 @@ def test_all_albums_user_id_nine_how_many(base_json_url, api_client):
     quantity_of_albums = len(data)
     print(f"Quantity of albums: {quantity_of_albums}")
 
-# 4. List all completed todos (completed: true) for user ID 1 and verify that all in the response are indeed completed.
+# 44. List all completed todos (completed: true) for user ID 1 and verify that all in the response are indeed completed.
 @pytest.mark.api_test
 def test_completed_todos_user_id_one_verify_completed(base_json_url, api_client):
     response = api_client.get(f"{base_json_url}/todos?userId=1&completed=true")
-    print("Step 4:")
+    print("Step 44:")
     print("Status code: " + str(response.status_code))
     if(response.status_code == 200):
         print("Fetch todos done successfully!")
@@ -77,12 +77,12 @@ def test_completed_todos_user_id_one_verify_completed(base_json_url, api_client)
           print("All todos that belong to user with ID 1 are completed")
 
 # Headers
-# 5. Send a request to httpbin.org/headers with the custom header X-Custom-Header: MyValue and validate the response.
+# 45. Send a request to httpbin.org/headers with the custom header X-Custom-Header: MyValue and validate the response.
 @pytest.mark.api_test
 def test_custom_header_httpbin(base_httpbin_url, api_client):
     url = f"{base_httpbin_url}/headers"
     headers = {"X-Custom-Header": "MyValue"}
-    print("Step 5:")
+    print("Step 45:")
     response = api_client.get(url, headers=headers)
     print("Status code: ", response.status_code)
     data = response.json()
@@ -92,13 +92,13 @@ def test_custom_header_httpbin(base_httpbin_url, api_client):
         print("Custom header not found or incorrect")
     print("Response JSON:", data)
 
-# 6. Send a request to httpbin.org/response-headers to set a custom response header (e.g., My-Test-Header: Hello) and check if it is present in the response headers.
+# 46. Send a request to httpbin.org/response-headers to set a custom response header (e.g., My-Test-Header: Hello) and check if it is present in the response headers.
 @pytest.mark.api_test
 def test_custom_response_header_httpbin(base_httpbin_url, api_client):
     url = f"{base_httpbin_url}/response-headers"
     params = {"My-Test-Header": "Hello"}
 
-    print("Step 6:")
+    print("Step 46:")
     response = api_client.get(url, params=params)
     print("Status code:", response.status_code)
 
@@ -108,13 +108,13 @@ def test_custom_response_header_httpbin(base_httpbin_url, api_client):
         print("Custom response header missing or incorrect")
     print("Response headers:", response.headers)
 
-# 7. Send a request to httpbin.org/headers with a custom User-Agent header ("My-Test-Agent/1.0") and validate if it was received correctly.
+# 47. Send a request to httpbin.org/headers with a custom User-Agent header ("My-Test-Agent/1.0") and validate if it was received correctly.
 @pytest.mark.api_test
 def test_custom_user_agent_header_httpbin(base_httpbin_url, api_client):
     url = f"{base_httpbin_url}/headers"
     headers = {"User-Agent": "My-Test-Agent/1.0"}
 
-    print("Step 7:")
+    print("Step 47:")
     response = api_client.get(url, headers=headers)
     data = response.json()
     print("Status code:", response.status_code)
@@ -125,13 +125,13 @@ def test_custom_user_agent_header_httpbin(base_httpbin_url, api_client):
         print("Custom User-Agent header missing or incorrect")
     print("Response JSON:", data)
 
-# 8. Send multiple custom headers (X-Header-1: Value1, X-Header-2: Value2) in a single request to httpbin.org/headers and validate all of them.
+# 48. Send multiple custom headers (X-Header-1: Value1, X-Header-2: Value2) in a single request to httpbin.org/headers and validate all of them.
 @pytest.mark.api_test
 def test_multiple_custom_headers_httpbin(base_httpbin_url, api_client):
     url = f"{base_httpbin_url}/headers"
     headers = {"X-Header-1": "Value1", "X-Header-2": "Value2"}
 
-    print("Step 8:")
+    print("Step 48:")
     response = api_client.get(url, headers=headers)
     data = response.json()
     print("Status code:", response.status_code)
@@ -143,11 +143,11 @@ def test_multiple_custom_headers_httpbin(base_httpbin_url, api_client):
     print("Response JSON:", data)
 
 # Authentication
-# 9. Test the httpbin Basic Auth endpoint (/basic-auth/user/passwd) with the correct credentials (user, passwd) and validate the 200 status.
+# 49. Test the httpbin Basic Auth endpoint (/basic-auth/user/passwd) with the correct credentials (user, passwd) and validate the 200 status.
 @pytest.mark.api_test
 def test_basic_auth_httpbin(base_httpbin_url, api_client):
     url = f"{base_httpbin_url}/basic-auth/user/passwd"
-    print("Step 9:")
+    print("Step 49:")
     response = api_client.get(url, auth=("user", "passwd"))
     print("Status code:", response.status_code)
 
@@ -157,11 +157,11 @@ def test_basic_auth_httpbin(base_httpbin_url, api_client):
         print("Authentication failed")
     print("Response JSON:", response.json())
 
-# 10. Test the same Basic Auth endpoint with a correct user but wrong password and validate the 401 status.
+# 50. Test the same Basic Auth endpoint with a correct user but wrong password and validate the 401 status.
 @pytest.mark.api_test
 def test_basic_wrong_auth_httpbin(base_httpbin_url, api_client):
     url = f"{base_httpbin_url}/basic-auth/user/passwd"
-    print("Step 10:")
+    print("Step 50:")
     response = api_client.get(url, auth=("user", "wrongpasswordhere"))
     print("Status code:", response.status_code)
 
@@ -177,13 +177,13 @@ def test_basic_wrong_auth_httpbin(base_httpbin_url, api_client):
     except ValueError:
         print("Response body is empty or not JSON.")
 
-# 11. Send a request to httpbin.org/bearer with a valid Bearer Token (mock, e.g., "my-mock-token") and validate the successful authentication.
+# 51. Send a request to httpbin.org/bearer with a valid Bearer Token (mock, e.g., "my-mock-token") and validate the successful authentication.
 @pytest.mark.api_test
 def test_bearer_auth_httpbin(base_httpbin_url, api_client):
     url = f"{base_httpbin_url}/bearer"
     headers = {"Authorization": "Bearer my-mock-token"}
 
-    print("Step 11:")
+    print("Step 51:")
     response = api_client.get(url, headers=headers)
     print("Status code:", response.status_code)
 
@@ -201,13 +201,13 @@ def test_bearer_auth_httpbin(base_httpbin_url, api_client):
     except ValueError:
         print("Response body is empty or not JSON.")
 
-# 12. Send a request to httpbin.org/bearer without any authorization header and validate if the response is 401.
+# 52. Send a request to httpbin.org/bearer without any authorization header and validate if the response is 401.
 @pytest.mark.api_test
 def test_bearer_empty_auth_httpbin(base_httpbin_url, api_client):
     url = f"{base_httpbin_url}/bearer"
     headers = {}
 
-    print("Step 12:")
+    print("Step 52:")
     response = api_client.get(url, headers=headers)
     print("Status code:", response.status_code)
 
@@ -226,12 +226,12 @@ def test_bearer_empty_auth_httpbin(base_httpbin_url, api_client):
         print("Response body is empty or not JSON.")
 
 # Advanced Assertions
-# 13. Fetch user with ID 1 from JSONPlaceholder and validate the data types of the keys id (int), name (str), address (dict), and company (dict).
+# 53. Fetch user with ID 1 from JSONPlaceholder and validate the data types of the keys id (int), name (str), address (dict), and company (dict).
 @pytest.mark.api_test
 def test_fetch_user_id_one_keys(base_json_url, api_client):
     url = f"{base_json_url}/users?id=1"
 
-    print("Step 13:")
+    print("Step 53:")
     response = api_client.get(url)
     print("Status code:", response.status_code)
 
@@ -262,12 +262,12 @@ def test_fetch_user_id_one_keys(base_json_url, api_client):
     else:
         print("'company' isn't of dict type")
 
-# 14. For the same user, check if the address key contains the sub-keys street, city, and zipcode.
+# 54. For the same user, check if the address key contains the sub-keys street, city, and zipcode.
 @pytest.mark.api_test
 def test_fetch_user_id_one_check_subkeys(base_json_url, api_client):
     url = f"{base_json_url}/users?id=1"
 
-    print("Step 14:")
+    print("Step 54:")
     response = api_client.get(url)
     print("Status code:", response.status_code)
 
@@ -295,12 +295,12 @@ def test_fetch_user_id_one_check_subkeys(base_json_url, api_client):
         print("Missing subkeys are the following: ", missing)
 
 
-# 15. Fetch post with ID 10 and validate if the keys userId and id are integers and if title and body are non-empty strings.
+# 55. Fetch post with ID 10 and validate if the keys userId and id are integers and if title and body are non-empty strings.
 @pytest.mark.api_test
 def test_fetch_user_id_ten_check_keys(base_json_url, api_client):
     url = f"{base_json_url}/posts?id=10"
 
-    print("Step 15:")
+    print("Step 55:")
     response = api_client.get(url)
     print("Status code:", response.status_code)
 
@@ -332,12 +332,12 @@ def test_fetch_user_id_ten_check_keys(base_json_url, api_client):
     else:
         print("'body' is an empty string")
 
-# 16. List the photos from album with ID 1 and check if each photo in the response contains the keys albumId, id, title, url, and thumbnailUrl.
+# 56. List the photos from album with ID 1 and check if each photo in the response contains the keys albumId, id, title, url, and thumbnailUrl.
 @pytest.mark.api_test
 def test_fetch_album_id_one_check_subkeys(base_json_url, api_client):
     url = f"{base_json_url}/photos?albumId=1"
 
-    print("Step 16:")
+    print("Step 56:")
     response = api_client.get(url)
     print("Status code:", response.status_code)
 
@@ -366,12 +366,12 @@ def test_fetch_album_id_one_check_subkeys(base_json_url, api_client):
     else:
         print("Missing subkeys are the following: ", missing)
 
-# 17. Check if the email key of user with ID 3 follows a valid email format (contains "@" and "." in the domain part).
+# 57. Check if the email key of user with ID 3 follows a valid email format (contains "@" and "." in the domain part).
 @pytest.mark.api_test
 def test_fetch_email_key_user_id_one_validate(base_json_url, api_client):
     url = f"{base_json_url}/users?id=1"
 
-    print("Step 17:")
+    print("Step 57:")
     response = api_client.get(url)
     print("Status code:", response.status_code)
 
@@ -406,12 +406,12 @@ def test_fetch_email_key_user_id_one_validate(base_json_url, api_client):
     
     print("User email is valid")
 
-# 18. Fetch the comments for post with ID 5 and check if the list of comments is not empty.
+# 58. Fetch the comments for post with ID 5 and check if the list of comments is not empty.
 @pytest.mark.api_test
 def test_fetch_comments_post_five_not_empty(base_json_url, api_client):
     url = f"{base_json_url}/comments?postId=5"
 
-    print("Step 18:")
+    print("Step 58:")
     response = api_client.get(url)
     print("Status code:", response.status_code)
 
@@ -430,11 +430,11 @@ def test_fetch_comments_post_five_not_empty(base_json_url, api_client):
     else:
         print("Comment list for post with ID 5 is empty")   
 
-# 19. For the first comment from the previous list, validate the types of postId (int), id (int), name (str), email (str), and body (str).
+# 59. For the first comment from the previous list, validate the types of postId (int), id (int), name (str), email (str), and body (str).
 @pytest.mark.api_test
 def test_fetch_first_comment_post_id_five_validate(base_json_url, api_client):
     url = f"{base_json_url}/comments?postId=5"
-    print("Step 19:")
+    print("Step 59:")
     response = api_client.get(url)
     print("Status code:", response.status_code)
 
@@ -471,12 +471,12 @@ def test_fetch_first_comment_post_id_five_validate(base_json_url, api_client):
     else:
         print("'body' isn't of str type")
     
-# 20. Fetch the todo with ID 199 and check if the value of the completed key is a boolean (True or False).
+# 60. Fetch the todo with ID 199 and check if the value of the completed key is a boolean (True or False).
 @pytest.mark.api_test
 def test_todo_one_nine_nine_completed_or_not(base_json_url, api_client):
     url = f"{base_json_url}/todos?id=199"
 
-    print("Step 18:")
+    print("Step 60:")
     response = api_client.get(url)
     print("Status code:", response.status_code)
 
