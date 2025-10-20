@@ -18,7 +18,7 @@ import requests
 # CONFIGURAÇÃO RÁPIDA
 # ==========================================================
 # Define se o dashboard HTML será aberto automaticamente ao fim da execução
-OPEN_DASHBOARD = False  # ⬅️ mude para True se quiser abrir automaticamente
+OPEN_DASHBOARD = True  # ⬅️ mude para True se quiser abrir automaticamente
 # ==========================================================
 
 # ===== estado da sessão =====
