@@ -1,22 +1,13 @@
 import requests
 import pytest
+import os
 import csv
 
-import os
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "")
+HEADERS = {"Authorization": f"Bearer {GITHUB_TOKEN}"} if GITHUB_TOKEN else {}
 
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "")  # define no ambiente, não no código
-
-session = requests.Session()
-if GITHUB_TOKEN:
-    session.headers.update({"Authorization": f"Bearer {GITHUB_TOKEN}"})
-session.headers.update({"Accept": "application/vnd.github+json"})
-
-final_user = "torvalds"
 base_url = "https://api.github.com/"
 base_json_url = "https://jsonplaceholder.typicode.com/"
-
-TOKEN = "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"
-HEADERS = {'Authorization': f"Bearer{TOKEN}"}
 
 
 def get_json_field_from_user(user, jsonField):
